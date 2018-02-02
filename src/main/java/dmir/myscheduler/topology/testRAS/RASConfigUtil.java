@@ -1,11 +1,10 @@
-package dmir.tkl.topology.testRAS;
+package dmir.myscheduler.topology.testRAS;
 
 import org.apache.storm.Config;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Utility class to manipulate storm conf
@@ -90,7 +89,7 @@ public class RASConfigUtil {
         return defaultValue;
     }
 
-    public static void printConfig(Map<String, Object> conf) {
-        Objects.requireNonNull(conf, "Conf is null").forEach((k, v) -> System.out.println(k + " : " + v));
-    }
+//    public static void printConfig(Map<String, Object> conf) {
+//        Objects.requireNonNull(conf, "Conf is null").forEach((k, v) -> System.out.println(k + " : " + v));
+//    }
 }

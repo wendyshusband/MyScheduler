@@ -1,4 +1,4 @@
-package dmir.tkl.scheduler.DirectToSlot;
+package dmir.myscheduler.scheduler.DirectToSlot;
 
 import java.util.Map;
 

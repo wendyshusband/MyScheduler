@@ -1,6 +1,4 @@
-package dmir.tkl.scheduler.DirectToSlot;
-
-import dmir.tkl.scheduler.DirectToSlot.IAssignExecutor;
+package dmir.myscheduler.scheduler.DirectToSlot;
 
 import java.util.HashMap;
 import java.util.Map;

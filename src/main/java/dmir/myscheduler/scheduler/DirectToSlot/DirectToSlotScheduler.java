@@ -1,7 +1,8 @@
-package dmir.tkl.scheduler.DirectToSlot;
+package dmir.myscheduler.scheduler.DirectToSlot;
 
 import clojure.lang.PersistentArrayMap;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.storm.scheduler.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,8 +133,7 @@ public class DirectToSlotScheduler implements IScheduler {
                             }
                             cursor = j;
                             //Do assignment.
-                            LOG.info(supervisor.getHost() + "::" + port + "->" + componentName);
-                            assignExecutor.forEach(e -> LOG.info("{" + e.getStartTask() + "~" + e.getEndTask() + "}"));
+                            LOG.info(supervisor.getHost() + ":" + port + "->" + componentName);
                             cluster.assign(new WorkerSlot(supervisor.getId(), port), topology.getId(), assignExecutor);
                             break;
                         }
@@ -156,11 +156,11 @@ public class DirectToSlotScheduler implements IScheduler {
 
     private ArrayList parseSlotList(String assignList) {
         ArrayList<Pair> slotList = new ArrayList<>();
-        Pair<String,Integer> slot;
+        ImmutablePair<String,Integer> slot;
         String[] pairs = assignList.split(";");
         for (String pair : pairs) {
             String[] temp = pair.split(":");
-            slot = new Pair<>(temp[0],Integer.valueOf(temp[1]));
+            slot = new ImmutablePair<>(temp[0], Integer.valueOf(temp[1]));
             slotList.add(slot);
         }
         return slotList;

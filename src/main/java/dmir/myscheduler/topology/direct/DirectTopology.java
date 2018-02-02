@@ -1,7 +1,7 @@
-package dmir.tkl.topology.direct;
+package dmir.myscheduler.topology.direct;
 
-import dmir.tkl.topology.testRAS.RASOutput;
-import dmir.tkl.topology.testRAS.RASRandomSentenceSpout;
+import dmir.myscheduler.topology.testRAS.RASOutput;
+import dmir.myscheduler.topology.testRAS.RASRandomSentenceSpout;
 import org.apache.storm.Config;
 import org.apache.storm.StormSubmitter;
 import org.apache.storm.generated.StormTopology;
