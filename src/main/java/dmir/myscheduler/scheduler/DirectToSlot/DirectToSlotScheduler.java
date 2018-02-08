@@ -64,20 +64,19 @@ public class DirectToSlotScheduler implements IScheduler {
             }
 
             boolean needsScheduling = cluster.needsScheduling(topology);
+            Map<String, List<ExecutorDetails>> componentToExecutors = cluster.getNeedsSchedulingComponentToExecutors(topology);
+            LOG.debug("needs scheduling(component->executor): " + componentToExecutors);
+            LOG.debug("needs scheduling(executor->components): " + cluster.getNeedsSchedulingExecutorToComponents(topology));
             if (!needsScheduling) {
-                LOG.warn("Your special topology does not need scheduling.");
-            } else {
+                LOG.info("Your special topology does not need scheduling.");
+            } else if (!componentToExecutors.isEmpty()) {
                 LOG.info("Your special topology {} needs scheduling.", topology.getName());
-                Map<String, List<ExecutorDetails>> componentToExecutors = cluster.getNeedsSchedulingComponentToExecutors(topology);
-                LOG.debug("needs scheduling(component->executor): " + componentToExecutors);
-                LOG.debug("needs scheduling(executor->components): " + cluster.getNeedsSchedulingExecutorToComponents(topology));
                 SchedulerAssignment currentAssignment = cluster.getAssignmentById(topology.getId());
                 if (currentAssignment != null) {
                     LOG.info("current assignments: " + currentAssignment.getExecutorToSlot());
                 } else {
                     LOG.info("current assignments: {}");
                 }
-
                 String componentName;
                 String assignListStr;
                 ArrayList<Pair> slotList;
@@ -91,6 +90,8 @@ public class DirectToSlotScheduler implements IScheduler {
                 //get need scheduling component again. (system bolt)
                 componentToExecutors = cluster.getNeedsSchedulingComponentToExecutors(topology);
                 slotAssignForSystemBolt(cluster, topology, componentToExecutors);
+            } else {
+                LOG.info("Your special topology does not need scheduling.");
             }
         }
     }
@@ -98,12 +99,24 @@ public class DirectToSlotScheduler implements IScheduler {
     private void slotAssign(Cluster cluster, TopologyDetails topology, Map<String, List<ExecutorDetails>> totalExecutors, String componentName, ArrayList<Pair> slotList) {
 
         LOG.info(componentName);
-        LOG.info(" exe:"+totalExecutors);
         List<ExecutorDetails> executors = totalExecutors.get(componentName);
+        Collections.sort(executors, new Comparator<ExecutorDetails>() {
+            @Override
+            public int compare(ExecutorDetails o1, ExecutorDetails o2) {
+                if (o1.getStartTask() > o2.getStartTask()) {
+                    return 1;
+                } else if (o1.getStartTask() < o2.getStartTask()) {
+                    return -1;
+                }
+                return 0;
+            }
+        });
+        LOG.info(" exe:"+totalExecutors+" slot list: "+slotList);
         double check = executors.size() * 1.0 / slotList.size();
 
+
         if (check < 1.0) {
-            LOG.error("You need assign more slot for "+componentName);
+            LOG.error(componentName+" parallelism: "+executors.size()+" < "+"slot number:"+slotList.size());
             throw new IllegalArgumentException();
         } else {
             Integer[] param = new Integer[2];
@@ -133,7 +146,7 @@ public class DirectToSlotScheduler implements IScheduler {
                             }
                             cursor = j;
                             //Do assignment.
-                            LOG.info(supervisor.getHost() + ":" + port + "->" + componentName);
+                            LOG.info(supervisor.getHost() + ":" + port + "->" + componentName+":"+assignExecutor.get(0));
                             cluster.assign(new WorkerSlot(supervisor.getId(), port), topology.getId(), assignExecutor);
                             break;
                         }

@@ -43,8 +43,8 @@ public class DirectTopology {
 
         component2Slot = new HashMap<>();
 
-        component2Slot.put(desSpout, "dmir5:6700;dmir5:6701;dmir6:6705;dmir4:6702");
-        component2Slot.put(desBolt, "dmir7:6700;dmir8:6703;dmir5:6700");
+        component2Slot.put(desSpout, "dmir5:6700;dmir6:6700;dmir7:6700;dmir8:6700");
+        component2Slot.put(desBolt, "dmir5:6701;dmir6:6701;dmir7:6701;dmir8:6701");
 
         config.put("assigned_flag", "1");
         config.put("design_map", component2Slot);
